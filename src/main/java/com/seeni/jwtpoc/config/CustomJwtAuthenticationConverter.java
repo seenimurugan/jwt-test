@@ -67,28 +67,12 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
         return new UsernamePasswordAuthenticationToken(wc1UserDetails, decodedJwt.orElse(null), null);
 
-//        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-//        return jwtAuthenticationConverter.convert(jwt);
-//        return new JwtAuthenticationToken(jwt);
     }
-
-//    @SneakyThrows
-//    private JwtDecoder getJwtDecoder(String jwtSigningKey) {
-//        var rsaPublicKey = convertToRSAPublicKey(jwtSigningKey);
-//        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
-//    }
 
     @SneakyThrows
     private JwtDecoder getJwtDecoder(RSAKey rsaKey) {
         return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
     }
-
-//    private RSAPublicKey convertToRSAPublicKey(String publicK) throws NoSuchAlgorithmException, InvalidKeySpecException {
-//        byte[] publicBytes = Base64.decodeBase64(publicK);
-//        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
-//        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
-//    }
 
     private Wc1UserDetails getUserDetailsFromClaims(Map<String, Object> claims) {
         return new Wc1UserDetails(claimAsString(claims.get(EBL_DOCUMENT_ID)),

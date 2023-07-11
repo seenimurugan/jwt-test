@@ -13,6 +13,4 @@ public class BasicAuthController {
     public String greeting(Principal principal) {
         return "Hello ".concat(principal.getName()).concat(" from BasicAuth Controller");
     }
-
-
 }

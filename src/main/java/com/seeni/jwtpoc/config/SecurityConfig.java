@@ -56,9 +56,6 @@ public class SecurityConfig {
     public SecurityFilterChain formAuthenticationFilterChain(HttpSecurity http) throws Exception {
 
         http
-//                .requestMatchers()
-//                .antMatchers("/form/**", "/login")
-//                .and()
                 .authorizeRequests()
                 .antMatchers(GET, "/login").permitAll()
                 .antMatchers("/form/**").authenticated()
@@ -102,7 +99,6 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .addFilterBefore(requestBodyReadFilter, UsernamePasswordAuthenticationFilter.class)
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(customJwtAuthenticationConverter)
@@ -110,35 +106,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    JwtDecoder jwtDecoder() {
-//        return NimbusJwtDecoder.withPublicKey(jwtSigningKey.publicKey()).build();
-//    }
-
-//    @Bean
-//    public JwtEncoder jwtEncoder() {
-//        JWK jwk = new RSAKey.Builder(jwtSigningKey.publicKey()).privateKey(jwtSigningKey.privateKey()).build();
-//        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-//        return new NimbusJwtEncoder(jwks);
-//    }
-
     @SneakyThrows
     @Bean
     public JwtEncoder jwtEncoder() {
         var jwkSet = JWKSet.load(jwtSigningKey.jwk().getFile());
-//        JWK jwk = new RSAKey.Builder(jwtSigningKey.publicKey()).privateKey(jwtSigningKey.privateKey()).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwkSet.getKeyByKeyId(KID)));
         return new NimbusJwtEncoder(jwks);
     }
-
-//    @Bean
-//    public JWKSet jwkSet() {
-//        RSAKey.Builder builder = new RSAKey.Builder(jwtSigningKey.publicKey())
-//                .keyUse(KeyUse.SIGNATURE)
-//                .algorithm(JWSAlgorithm.RS256)
-//                .keyID("wc1-jwt-demo-id");
-//        return new JWKSet(builder.build());
-//    }
 
     @Bean
     public JWKSet jwkSet() throws ParseException, IOException {

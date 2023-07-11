@@ -1,14 +1,5 @@
 # Getting Started
 
-## create rsa key pair
-openssl genrsa -out keypair.pem 2048
-
-## extract public key
-openssl rsa -in keypair.pem -pubout -out public.pem
-
-## create private key in PKCS#8 format
-openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
-
 # JWKS:
 
     1. Jwks keys are generated on every startup and printed on the console
@@ -51,6 +42,16 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out priv
    --header 'Cookie: JSESSIONID=ED68AFEBC21FF3BE5BB35FB6629AECD5' \
    --data 'replace_me_with_above_body_jwt_token'
 
+# Pem format
+
+## create rsa key pair
+openssl genrsa -out keypair.pem 2048
+
+## extract public key
+openssl rsa -in keypair.pem -pubout -out public.pem
+
+## create private key in PKCS#8 format
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
 
 # Version:
 ## To use with Spring boot 2.5.14

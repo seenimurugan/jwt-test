@@ -47,8 +47,6 @@ public class TokenService {
 
     public String generateWc1UserDetailsToken(Wc1UserDetails wc1UserDetails) {
         Instant now = Instant.now();
-//        String scope = String.join(" ", Optional.ofNullable(tokenInfo.scope())
-//                .orElse(Set.of()));
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)

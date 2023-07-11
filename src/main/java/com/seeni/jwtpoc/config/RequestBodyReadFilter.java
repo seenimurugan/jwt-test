@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class RequestBodyReadFilter extends OncePerRequestFilter {
     }
 
     private boolean isRequestMethodMatch(HttpServletRequest request) {
-        return "POST".equalsIgnoreCase(request.getMethod());
+        return POST.name().equalsIgnoreCase(request.getMethod());
     }
 
     private boolean isRequestPathMatch(HttpServletRequest request) {
