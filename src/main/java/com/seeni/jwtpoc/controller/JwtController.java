@@ -5,7 +5,6 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.seeni.jwtpoc.model.request.TokenInfo;
 import com.seeni.jwtpoc.model.request.Wc1UserDetails;
 import com.seeni.jwtpoc.service.TokenService;
-import com.seeni.jwtpoc.service.XmlToPemConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -21,7 +20,6 @@ import java.util.Map;
 public class JwtController {
 
     private final TokenService tokenService;
-    private final XmlToPemConverter xmlToPemConverter;
     private final JWKSet jwkSet;
 
     @GetMapping("/ebl")
@@ -50,12 +48,6 @@ public class JwtController {
         String token = tokenService.generateWc1UserDetailsToken(wc1UserDetails);
         log.info("Token granted: {}", token);
         return token;
-    }
-
-    @PostMapping(path = "/convert")
-    public String getPemFormat(@RequestBody Map<Integer, String> xmlKey) {
-        String xmlRsaKey = String.join("", xmlKey.get(0), xmlKey.get(1), xmlKey.get(2));
-        return xmlToPemConverter.convertXmlRsaToPem(xmlRsaKey);
     }
 
     @GetMapping("/.well-known/jwks.json")
