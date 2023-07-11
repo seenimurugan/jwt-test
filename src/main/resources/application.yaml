@@ -17,6 +17,7 @@ jwt:
   ]
   post-request-path:
     - /jwt/secureendpoint
+    - /jwt/redirectsecureendpoint
 
 rsa:
   private-key: classpath:certs/private.pem

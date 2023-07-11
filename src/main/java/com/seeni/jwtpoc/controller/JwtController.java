@@ -7,9 +7,13 @@ import com.seeni.jwtpoc.model.request.Wc1UserDetails;
 import com.seeni.jwtpoc.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -32,6 +36,15 @@ public class JwtController {
         var wc1UserDetails = (Wc1UserDetails) authentication.getPrincipal();
         log.info("Wc1 User Details[{}]", wc1UserDetails);
         return "Hello ".concat(wc1UserDetails.code()).concat(" ").concat(wc1UserDetails.companyCode()).concat(" from JWT Controller");
+    }
+
+    @PostMapping("/redirectsecureendpoint")
+    public ModelAndView redirectSecureEndpoint(Authentication authentication, HttpServletRequest request) {
+        var wc1UserDetails = (Wc1UserDetails) authentication.getPrincipal();
+        log.info("Wc1 User Details[{}]", wc1UserDetails);
+        request.setAttribute(
+                View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
+        return new ModelAndView("redirect:/ebl");
     }
 
     @PostMapping(path = "/token")
