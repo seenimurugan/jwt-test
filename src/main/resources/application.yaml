@@ -1,0 +1,29 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+#          issuer-uri: https://login.microsoftonline.com/804a70cf-4a61-4a08-908e-a32b2cff8131/v2.0 - if this uri available to fetch the certificate and is same as iss in the jwt then jwk-set-uri is not needed.
+#          jwk-set-uri: https://idp.example.com/.well-known/jwks.json -- only use this if the iss in the jwt can not be used to fetch the certificate.
+          audiences: [5436e3e3-0866-4ac1-b0c0-85c6ec8b863f]
+          jwk-set-uri: http://localhost:8080/jwt/.well-known/jwks.json
+
+jwt:
+  allowed-cw1-instances: [5436e3e3-0866-4ac1-b0c0-85c6ec8b863b]
+  roles: [
+    "1:V0enQ3MmF6L2wvZXB5SUNvUkZHYks3Zi9YQmdmK1I2TzJaTXBidW92TnFFakVvTkJiSUd1UnEwcU5LTUlXdFVsc0hrYUV3eVdJaHRlZzhiRi9rZ0pJZEt1N0s2RVBkUnRsQkVWRU5RVHl0NkwwblA0ekEvcXpzNzJtdTZ2NEhuQ1BCdkNGZ1N6Wmx6RWRnWVcrc2lxQzg3UFRNUTVyamVOQkFjUnpKU1FTQld4RVRrY3VMeWs4dz09",
+    "2:PC9Nb2R1bHVzPjxFeHBvbmVudD5BUUFCPC9FeHBvbmVudD48L1JTQUtleVZhbHVlPg==",
+    "0:PFJTQUtleVZhbHVlPjxNb2R1bHVzPnJWc1hRQnRLaXZJU0RrZWFqd1BlN1NoQUdjZHBRY3N4YkJybkNPQVFpQ1orUDY5c3A3VWg5YVkzclE2Q0U5OEV6RC8zRlo3dGdIT2x4N3lOc25HbVFsVFgxUXhSV2c2WFlvTTJJWHJVajRHWHZkV2tlSnR6Y0MxTEZ0aDg2dVMwYVZTNmpWUFJOaUduU2g2dVZnOUF6TVFKWGxOcE1oOD"
+  ]
+  post-request-path:
+    - /jwt/secureendpoint
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+  jwk-set: classpath:certs/jwk-set.json
+logging:
+  level:
+    org.springframework.web: debug
+
+
