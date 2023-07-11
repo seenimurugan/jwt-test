@@ -7,5 +7,5 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 @ConfigurationProperties(prefix = "rsa")
-public record JwtSigningKey(RSAPublicKey publicKey, RSAPrivateKey privateKey, Resource jwkSet) {
+public record JwtSigningKey(RSAPublicKey publicKey, RSAPrivateKey privateKey, Resource jwkSet, Resource jwk) {
 }

@@ -2,7 +2,7 @@ package com.seeni.jwtpoc.config;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import com.seeni.jwtpoc.model.request.Wc1UserDetails;
-import com.seeni.jwtpoc.service.XmlToJwkSetConverter;
+import com.seeni.jwtpoc.service.XmlRSAPublicKeyToRSAKeyObjectConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.core.convert.converter.Converter;
@@ -35,7 +35,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     public static final String TIME_ZONE = "timeZone";
     public static final String SIGNATURE = "signature";
     public static final String ACTION = "action";
-    private final XmlToJwkSetConverter xmlToJwkSetConverter;
+    private final XmlRSAPublicKeyToRSAKeyObjectConverter xmlToJwkSetConverter;
 
     public AbstractAuthenticationToken convert(Jwt jwt) {
         var claims = jwt.getClaims();

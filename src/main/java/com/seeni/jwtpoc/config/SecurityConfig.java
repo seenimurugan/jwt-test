@@ -1,7 +1,6 @@
 package com.seeni.jwtpoc.config;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -10,6 +9,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -36,6 +36,7 @@ import static org.springframework.http.HttpMethod.POST;
 @Slf4j
 public class SecurityConfig {
 
+    public static final String KID = "wc1-jwt-demo";
     private final JwtSigningKey jwtSigningKey;
     private final RequestBodyReadFilter requestBodyReadFilter;
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
@@ -114,10 +115,19 @@ public class SecurityConfig {
 //        return NimbusJwtDecoder.withPublicKey(jwtSigningKey.publicKey()).build();
 //    }
 
+//    @Bean
+//    public JwtEncoder jwtEncoder() {
+//        JWK jwk = new RSAKey.Builder(jwtSigningKey.publicKey()).privateKey(jwtSigningKey.privateKey()).build();
+//        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+//        return new NimbusJwtEncoder(jwks);
+//    }
+
+    @SneakyThrows
     @Bean
     public JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(jwtSigningKey.publicKey()).privateKey(jwtSigningKey.privateKey()).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        var jwkSet = JWKSet.load(jwtSigningKey.jwk().getFile());
+//        JWK jwk = new RSAKey.Builder(jwtSigningKey.publicKey()).privateKey(jwtSigningKey.privateKey()).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwkSet.getKeyByKeyId(KID)));
         return new NimbusJwtEncoder(jwks);
     }
 
@@ -139,7 +149,7 @@ public class SecurityConfig {
     public RSAKey rsaKey() throws JOSEException {
         var rsaKey = new RSAKeyGenerator(2048)
                 .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key (optional)
-                .keyID("wc1-jwt-demo") // give the key a unique ID (optional)
+                .keyID(KID) // give the key a unique ID (optional)
                 .generate();
         log.info("private and public key [{}]", rsaKey);
         log.info("public key [{}]", rsaKey.toPublicJWK());

@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class XmlToJwkSetConverter {
+public class XmlRSAPublicKeyToRSAKeyObjectConverter {
 
     public static final String MODULES_NAME = "Modulus";
     public static final String EXPONENT_NAME = "Exponent";
