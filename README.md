@@ -2,9 +2,9 @@
 
 # JWKS:
 
-    1. Jwks keys are generated on every startup and printed on the console
+    1. Jwks keys can be generated from /keys endpoint and also every startup it gets printed on the console
     2. Copy both private and public key pair json and just the public key json into jwk.json and jwk-set.json
-    3. To generate xml version of the jwk-set.json 
+    3. To generate xml version of the jwk-set.json into roles head JWT claim:
         1. Convert jwk to pem format using https://8gwifi.org/jwkconvertfunctions.jsp
         2. Convert the pem to xml using https://raskeyconverter.azurewebsites.net/PemToXml?handler=ConvertXML
         3. Encode the xml using - https://www.base64encode.org/
@@ -41,6 +41,16 @@
    --header 'Authorization: Bearer replace_me_with_above_header_jwt ' \
    --header 'Cookie: JSESSIONID=ED68AFEBC21FF3BE5BB35FB6629AECD5' \
    --data 'replace_me_with_above_body_jwt_token'
+
+4. Generate Private and Public keys
+   
+   > curl --location --request GET 'http://localhost:8080/jwt/keys' \
+   --header 'Content-Type: application/json' \
+   --header 'Cookie: JSESSIONID=6397865176A09E0FF268A9443F386AED' \
+   --data '{
+   "name":"seenimurugan",
+   "scope": ["read", "write"]
+   }'
 
 # Pem format
 

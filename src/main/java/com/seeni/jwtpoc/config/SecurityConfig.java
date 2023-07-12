@@ -23,9 +23,14 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -92,7 +97,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(POST, "/jwt/token").permitAll()
                 .antMatchers(POST, "/jwt/bodytoken").permitAll()
-                .antMatchers(POST, "/jwt/convert").permitAll()
+                .antMatchers(GET, "/jwt/keys").permitAll()
                 .antMatchers(GET, "/jwt/.well-known/jwks.json").permitAll()
                 .anyRequest()
                 .authenticated()
@@ -120,14 +125,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RSAKey rsaKey() throws JOSEException {
+    public RSAKey customRsaKey() throws JOSEException {
         var rsaKey = new RSAKeyGenerator(2048)
                 .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key (optional)
-                .keyID(KID) // give the key a unique ID (optional)
+                .keyID(UUID.randomUUID().toString()) // give the key a unique ID (optional)
                 .generate();
         log.info("private and public key [{}]", rsaKey);
         log.info("public key [{}]", rsaKey.toPublicJWK());
         return rsaKey;
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://127.0.0.1"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

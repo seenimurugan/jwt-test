@@ -1,11 +1,14 @@
 package com.seeni.jwtpoc.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.seeni.jwtpoc.model.request.TokenInfo;
 import com.seeni.jwtpoc.model.request.Wc1UserDetails;
 import com.seeni.jwtpoc.service.TokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,8 +27,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtController {
 
+    public static final String KEYS = "keys";
+    public static final String JWKS = "jwks";
+    public static final String JWK = "jwk";
     private final TokenService tokenService;
     private final JWKSet jwkSet;
+    private final RSAKey customRsaKey;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/ebl")
     public String greeting(Principal principal) {
@@ -66,5 +75,15 @@ public class JwtController {
     @GetMapping("/.well-known/jwks.json")
     public Map<String, Object> keys() {
         return this.jwkSet.toJSONObject();
+    }
+
+    @SneakyThrows
+    @GetMapping("/keys")
+    public Map<String, Object> jwk() {
+        var jwks = Map.of(KEYS, List.of(customRsaKey.toPublicJWK().toJSONObject()));
+        var jwk = Map.of(KEYS, List.of(customRsaKey.toJSONObject()));
+        return Map.of(
+                JWKS, jwks,
+                JWK, jwk);
     }
 }
