@@ -3,12 +3,13 @@
 # JWKS:
 
     1. Jwks keys can be generated from /keys endpoint and also every startup it gets printed on the console
-    2. Copy both private and public key pair json and just the public key json into jwk.json and jwk-set.json
-    3. To generate xml version of the jwk-set.json into roles head JWT claim:
-        1. Convert jwk to pem format using https://8gwifi.org/jwkconvertfunctions.jsp
-        2. Convert the pem to xml using https://raskeyconverter.azurewebsites.net/PemToXml?handler=ConvertXML
-        3. Encode the xml using - https://www.base64encode.org/
-        4. Copy the content to jwt:roles section in the application.yaml file 
+    2. Copy both private key and public key json into jwk.json and jwk-set.json
+    3. To populate the roles claim in the header JWT follow the below steps
+        1. Copy everything from jwk-set.json
+        2. Convert jwk to pem format using https://8gwifi.org/jwkconvertfunctions.jsp
+        3. Convert the pem to xml using https://raskeyconverter.azurewebsites.net/PemToXml?handler=ConvertXML
+        4. Encode the xml using - https://www.base64encode.org/
+        5. Copy the content to jwt:roles section in the application.yaml file 
 
 # Postman Request
 
