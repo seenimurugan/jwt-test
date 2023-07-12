@@ -1,7 +1,10 @@
 package com.seeni.jwtpoc.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -21,6 +24,7 @@ import java.util.stream.Stream;
 
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class XmlRSAPublicKeyToRSAKeyObjectConverter {
 
@@ -32,7 +36,7 @@ public class XmlRSAPublicKeyToRSAKeyObjectConverter {
     public static final String MODULUS = "n";
     public static final String EXPONENT = "e";
     public static final String ALG_FAMILY = "kty";
-
+    private final ObjectMapper objectMapper;
 
     public RSAKey convertXmlRsaToRSAKeyObject(String xmlContentString) {
         byte[] decodedXmlContentString = b64decode(xmlContentString);
@@ -45,18 +49,17 @@ public class XmlRSAPublicKeyToRSAKeyObjectConverter {
     }
 
     private boolean checkXMLRSAKey(Document xmlDoc) {
-
         Node root = xmlDoc.getFirstChild();
         NodeList children = root.getChildNodes();
 
         return Stream.of(PUBLIC_KEY_XML_NODES)
                 .anyMatch(wantedNode -> IntStream.range(0, children.getLength()).boxed()
                         .anyMatch(index -> wantedNode.equals(children.item(index).getNodeName())));
-
     }
 
+    @SneakyThrows
     private RSAKey convertXMLRSAPublicKeyToRSAKeyObject(Document xmlDoc) {
-
+        log.info("xml rsa key validation passed!!!");
         Node root = xmlDoc.getFirstChild();
         NodeList children = root.getChildNodes();
 
@@ -70,8 +73,7 @@ public class XmlRSAPublicKeyToRSAKeyObjectConverter {
                 MODULUS, modulusAndExponentMap.get(MODULES_NAME));
 
         var jwksMap = Map.<String, Object>of("keys", List.of(jwkMap));
-
-
+        log.info("converted jwks key {}", objectMapper.writeValueAsString(jwksMap));
         try {
            JWKSet jwkSet = JWKSet.parse(jwksMap);
            return jwkSet.getKeyByKeyId(KID_VALUE).toRSAKey();

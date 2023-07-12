@@ -20,8 +20,6 @@ jwt:
     - /jwt/redirectsecureendpoint
 
 rsa:
-  private-key: classpath:certs/private.pem
-  public-key: classpath:certs/public.pem
   jwk-set: classpath:certs/jwk-set.json
   jwk: classpath:certs/jwk.json
 logging:
