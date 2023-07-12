@@ -13,8 +13,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static com.seeni.jwtpoc.config.CustomJwtAuthenticationConverter.*;
 
@@ -26,8 +24,6 @@ public class TokenService {
 
     public String generateToken(TokenInfo tokenInfo) {
         Instant now = Instant.now();
-        String scope = String.join(" ", Optional.ofNullable(tokenInfo.scope())
-                .orElse(Set.of()));
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .audience(List.of("5436e3e3-0866-4ac1-b0c0-85c6ec8b863f"))

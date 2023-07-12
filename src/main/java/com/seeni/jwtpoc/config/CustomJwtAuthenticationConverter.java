@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.seeni.jwtpoc.config.RequestBodyReadFilter.REQUEST_BODY;
+import static com.seeni.jwtpoc.service.XmlRSAPublicKeyToRSAKeyObjectConverter.b64decode;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 @Component
@@ -38,10 +39,40 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     public AbstractAuthenticationToken convert(Jwt jwt) {
         var claims = jwt.getClaims();
-        var roles = Optional.ofNullable(claims.get("roles"))
+        var roles = getRolesFromClaims(claims);
+        var xmlPublicKey = getXmlPublicKeyFromRoles(roles);
+        log.info("xml public key [{}]", b64decode(xmlPublicKey));
+        var jwtDecoder = getJwtDecoder(xmlPublicKey);
+        var requestBody = getRequestBody();
+        var decodedJwt = requestBody.map(jwtDecoder::decode);
+        log.info("Body JWT validation successful!!!");
+        var wc1UserDetails = getUserDetailsFromJWT(decodedJwt);
+        log.info("UserDetails extracted from JWT [{}]", wc1UserDetails);
+        return new UsernamePasswordAuthenticationToken(wc1UserDetails, decodedJwt.orElse(null), null);
+    }
+
+    private Wc1UserDetails getUserDetailsFromJWT(Optional<Jwt> decodedJwt) {
+        return decodedJwt
+                .map(jwt1 -> getUserDetailsFromClaims(jwt1.getClaims()))
+                .orElse(null);
+    }
+
+    private static Optional<String> getRequestBody() {
+        var requestAttributes = RequestContextHolder.getRequestAttributes();
+        return Optional.ofNullable(requestAttributes)
+                .map(attribute -> attribute.getAttribute(REQUEST_BODY, SCOPE_REQUEST))
+                .map(String::valueOf);
+    }
+
+    private static List<String> getRolesFromClaims(Map<String, Object> claims) {
+        return Optional.ofNullable(claims.get("roles"))
+                .filter(o -> o instanceof List<?>)
                 .map(o -> (List<String>) o)
                 .orElse(List.of());
-        var xmlPublicKey = roles.stream()
+    }
+
+    private static String getXmlPublicKeyFromRoles(List<String> roles) {
+        return roles.stream()
                 .map(splitJwt -> {
                     var position = (int) splitJwt.charAt(0);
                     var actualString = splitJwt.substring(2);
@@ -51,21 +82,6 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
                 .sorted(Map.Entry.comparingByKey(Comparator.naturalOrder()))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.joining());
-
-        var jwtDecoder = getJwtDecoder(xmlPublicKey);
-
-        var requestAttributes = RequestContextHolder.getRequestAttributes();
-        var requestBody = Optional.ofNullable(requestAttributes)
-                .map(attribute -> attribute.getAttribute(REQUEST_BODY, SCOPE_REQUEST))
-                .map(String::valueOf);
-
-        var decodedJwt = requestBody.map(jwtDecoder::decode);
-
-        var wc1UserDetails = decodedJwt
-                .map(jwt1 -> getUserDetailsFromClaims(jwt1.getClaims())).orElse(null);
-
-        return new UsernamePasswordAuthenticationToken(wc1UserDetails, decodedJwt.orElse(null), null);
-
     }
 
     private JwtDecoder getJwtDecoder(String xmlPublicKey) {
