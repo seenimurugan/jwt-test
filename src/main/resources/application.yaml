@@ -18,6 +18,9 @@ jwt:
   post-request-path:
     - /jwt/secureendpoint
     - /jwt/redirectsecureendpoint
+  cors-allowed-origins:
+    - http://127.0.0.1
+
 
 rsa:
   jwk-set: classpath:certs/jwk-set.json
@@ -25,5 +28,6 @@ rsa:
 logging:
   level:
     org.springframework.web: debug
+    org.springframework.security: trace
 
 

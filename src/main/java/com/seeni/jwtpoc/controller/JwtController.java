@@ -15,8 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,8 @@ public class JwtController {
     private final ObjectMapper objectMapper;
 
     @GetMapping("/ebl")
-    public String greeting(Principal principal) {
+    public String greeting(Principal principal, @RequestParam String eblDocumentId) {
+        log.info("eblDocumentId[{}]", eblDocumentId);
         return "Hello ".concat(principal.getName()).concat(" from JWT Controller");
     }
 
@@ -48,12 +51,14 @@ public class JwtController {
     }
 
     @PostMapping("/redirectsecureendpoint")
-    public ModelAndView redirectSecureEndpoint(Authentication authentication, HttpServletRequest request) {
+    public ModelAndView redirectSecureEndpoint(Authentication authentication, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         var wc1UserDetails = (Wc1UserDetails) authentication.getPrincipal();
-        log.info("Wc1 User Details[{}]", wc1UserDetails);
+        log.info("Wc1 User Details[{}] sessionId: {}", wc1UserDetails, session.getId());
         request.setAttribute(
-                View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
-        return new ModelAndView("redirect:/ebl");
+                View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.FOUND);
+        redirectAttributes.addFlashAttribute("flashAttribute", "redirectWithRedirectAttributes");
+        redirectAttributes.addAttribute("eblDocumentId", wc1UserDetails.eblDocumentId());
+        return new ModelAndView("redirect:/jwt/ebl");
     }
 
     @PostMapping(path = "/token")

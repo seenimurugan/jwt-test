@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class RequestBodyReadFilter extends OncePerRequestFilter {
 
     public static final String REQUEST_BODY = "requestBody";
-    private final CustomTokenValidationProperties customTokenValidationProperties;
+    private final JwtConfigProperties jwtConfigProperties;
     private final AntPathMatcher antPathMatcher;
 
     @Override
@@ -44,7 +44,7 @@ public class RequestBodyReadFilter extends OncePerRequestFilter {
     }
 
     private boolean isRequestPathMatch(HttpServletRequest request) {
-        return customTokenValidationProperties.postRequestPath().stream()
+        return jwtConfigProperties.postRequestPath().stream()
                 .anyMatch(pattern -> antPathMatcher.match(pattern, request.getRequestURI()));
     }
 }

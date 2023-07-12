@@ -32,8 +32,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @EnableMethodSecurity
 @EnableWebSecurity
@@ -43,6 +42,7 @@ public class SecurityConfig {
 
     public static final String KID = "wc1-jwt-demo";
     private final JwtSigningKey jwtSigningKey;
+    private final JwtConfigProperties jwtConfigProperties;
     private final RequestBodyReadFilter requestBodyReadFilter;
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
 
@@ -103,6 +103,7 @@ public class SecurityConfig {
                 .authenticated()
                 .and()
                 .csrf().disable()
+                .cors().and()
                 .addFilterBefore(requestBodyReadFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
@@ -138,9 +139,12 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://127.0.0.1"));
+        configuration.setAllowedOrigins(jwtConfigProperties.corsAllowedOrigins());
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -1,6 +1,6 @@
 package com.seeni.jwtpoc.service;
 
-import com.seeni.jwtpoc.config.CustomTokenValidationProperties;
+import com.seeni.jwtpoc.config.JwtConfigProperties;
 import com.seeni.jwtpoc.model.request.TokenInfo;
 import com.seeni.jwtpoc.model.request.Wc1UserDetails;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import static com.seeni.jwtpoc.config.CustomJwtAuthenticationConverter.*;
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtEncoder encoder;
-    private final CustomTokenValidationProperties customTokenValidationProperties;
+    private final JwtConfigProperties jwtConfigProperties;
 
     public String generateToken(TokenInfo tokenInfo) {
         Instant now = Instant.now();
@@ -33,8 +33,8 @@ public class TokenService {
                 .subject(tokenInfo.name())
                 .claims(stringObjectMap -> {
                     var customClaims = Map.of(
-                            "azp", customTokenValidationProperties.allowedCw1Instances(),
-                            "roles", customTokenValidationProperties.roles());
+                            "azp", jwtConfigProperties.allowedCw1Instances(),
+                            "roles", jwtConfigProperties.roles());
                     stringObjectMap.putAll(customClaims);
                 })
                 .build();

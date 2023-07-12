@@ -42,13 +42,13 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
         var claims = jwt.getClaims();
         var roles = getRolesFromClaims(claims);
         var xmlPublicKey = getXmlPublicKeyFromRoles(roles);
-        log.trace("xml public key [{}]", new String(b64decode(xmlPublicKey), UTF_8));
+        log.info("xml public key [{}]", new String(b64decode(xmlPublicKey), UTF_8));
         var jwtDecoder = getJwtDecoder(xmlPublicKey);
         var requestBody = getRequestBody();
         var decodedJwt = requestBody.map(jwtDecoder::decode);
-        log.info("Body JWT validation successful!!!");
+        decodedJwt.ifPresent(jwt1 -> log.info("Body JWT validation successful!!!"));
         var wc1UserDetails = getUserDetailsFromJWT(decodedJwt);
-        log.debug("UserDetails extracted from JWT [{}]", wc1UserDetails);
+        log.info("UserDetails extracted from JWT [{}]", wc1UserDetails);
         return new UsernamePasswordAuthenticationToken(wc1UserDetails, decodedJwt.orElse(null), null);
     }
 
