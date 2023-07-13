@@ -10,14 +10,13 @@ import com.seeni.jwtpoc.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.List;
@@ -40,7 +39,7 @@ public class JwtController {
     @GetMapping("/ebl")
     public String greeting(Principal principal, @RequestParam String eblDocumentId) {
         log.info("eblDocumentId[{}]", eblDocumentId);
-        return "Hello ".concat(principal.getName()).concat(" from JWT Controller");
+        return "Hello ".concat("principal.getName()").concat(" from JWT Controller");
     }
 
     @PostMapping("/secureendpoint")
@@ -51,14 +50,18 @@ public class JwtController {
     }
 
     @PostMapping("/redirectsecureendpoint")
-    public ModelAndView redirectSecureEndpoint(Authentication authentication, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public ModelAndView redirectSecureEndpoint(Authentication authentication,
+                                               HttpSession session,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response,
+                                               RedirectAttributes redirectAttributes) {
         var wc1UserDetails = (Wc1UserDetails) authentication.getPrincipal();
         log.info("Wc1 User Details[{}] sessionId: {}", wc1UserDetails, session.getId());
-        request.setAttribute(
-                View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.FOUND);
-        redirectAttributes.addFlashAttribute("flashAttribute", "redirectWithRedirectAttributes");
+//        request.setAttribute(
+//                View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.FOUND);
+//        redirectAttributes.addFlashAttribute("flashAttribute", "redirectWithRedirectAttributes");
         redirectAttributes.addAttribute("eblDocumentId", wc1UserDetails.eblDocumentId());
-        return new ModelAndView("redirect:/jwt/ebl");
+        return new ModelAndView("/form/ebl");
     }
 
     @PostMapping(path = "/token")

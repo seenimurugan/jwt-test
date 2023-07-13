@@ -32,7 +32,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @EnableMethodSecurity
 @EnableWebSecurity
@@ -47,7 +48,7 @@ public class SecurityConfig {
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
 
     @Bean
-    public InMemoryUserDetailsManager users() {
+    InMemoryUserDetailsManager users() {
         return new InMemoryUserDetailsManager(
                 User.withUsername("seeni")
                         .password("{noop}password")
@@ -58,30 +59,27 @@ public class SecurityConfig {
 
     @Order(2)
     @Bean
-    public SecurityFilterChain formAuthenticationFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain formAuthenticationFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeRequests()
                 .antMatchers(GET, "/login").permitAll()
                 .antMatchers("/form/**").authenticated()
-                .anyRequest()
-                .authenticated()
-                .and()
+                .anyRequest().authenticated().and()
+                .cors().and()
                 .formLogin();
         return http.build();
     }
 
     @Order(1)
     @Bean
-    public SecurityFilterChain basicAuthAuthenticationFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain basicAuthAuthenticationFilterChain(HttpSecurity http) throws Exception {
 
         http.requestMatchers()
                 .antMatchers("/basic/auth/**", "/loginn")
                 .and()
                 .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
+                .anyRequest().authenticated().and()
                 .csrf().disable()
                 .httpBasic();
         return http.build();
@@ -89,7 +87,7 @@ public class SecurityConfig {
 
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Bean
-    public SecurityFilterChain jwtAuthenticationFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain jwtAuthenticationFilterChain(HttpSecurity http) throws Exception {
 
         http.requestMatchers()
                 .antMatchers("/jwt/**")
@@ -99,9 +97,7 @@ public class SecurityConfig {
                 .antMatchers(POST, "/jwt/bodytoken").permitAll()
                 .antMatchers(GET, "/jwt/keys").permitAll()
                 .antMatchers(GET, "/jwt/.well-known/jwks.json").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
+                .anyRequest().authenticated().and()
                 .csrf().disable()
                 .cors().and()
                 .addFilterBefore(requestBodyReadFilter, UsernamePasswordAuthenticationFilter.class)
@@ -114,14 +110,14 @@ public class SecurityConfig {
 
     @SneakyThrows
     @Bean
-    public JwtEncoder jwtEncoder() {
+    JwtEncoder jwtEncoder() {
         var jwkSet = JWKSet.load(jwtSigningKey.jwk().getFile());
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwkSet.getKeyByKeyId(KID)));
         return new NimbusJwtEncoder(jwks);
     }
 
     @Bean
-    public JWKSet jwkSet() throws ParseException, IOException {
+    JWKSet jwkSet() throws ParseException, IOException {
         return JWKSet.load(jwtSigningKey.jwkSet().getFile());
     }
 
