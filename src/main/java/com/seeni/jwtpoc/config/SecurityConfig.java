@@ -77,7 +77,7 @@ public class SecurityConfig {
     SecurityFilterChain basicAuthAuthenticationFilterChain(HttpSecurity http) throws Exception {
 
         http.requestMatchers()
-                .antMatchers("/basic/auth/**", "/loginn")
+                .antMatchers("/basic/auth/**")
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated().and()
