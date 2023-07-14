@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Component
@@ -20,7 +22,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequiredArgsConstructor
 public class RequestBodyReadFilter extends OncePerRequestFilter {
 
-    public static final String REQUEST_BODY = "requestBody";
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String DATA_TOKEN = "data";
+
+    public static final String ACCESS_TOKEN_IDENTIFIER = ACCESS_TOKEN + "=";
+    public static final String DATA_TOKEN_IDENTIFIER = "&" + DATA_TOKEN + "=";
+
+
     private final JwtConfigProperties jwtConfigProperties;
     private final AntPathMatcher antPathMatcher;
 
@@ -33,7 +41,10 @@ public class RequestBodyReadFilter extends OncePerRequestFilter {
             var requestBody = request.getReader()
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
-            request.setAttribute(REQUEST_BODY, requestBody);
+            var accessToken = substringBetween(requestBody, ACCESS_TOKEN_IDENTIFIER, DATA_TOKEN_IDENTIFIER);
+            var dataToken = substringAfter(requestBody, DATA_TOKEN_IDENTIFIER);
+            request.setAttribute(ACCESS_TOKEN, accessToken);
+            request.setAttribute(DATA_TOKEN, dataToken);
         }
 
         filterChain.doFilter(request, response);

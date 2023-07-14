@@ -32,6 +32,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
+import static com.seeni.jwtpoc.config.RequestBodyReadFilter.ACCESS_TOKEN;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -99,9 +100,10 @@ public class SecurityConfig {
                 .antMatchers(GET, "/jwt/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated().and()
                 .csrf().disable()
-                .cors().and()
-                .addFilterBefore(requestBodyReadFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors().and() // without this configured corsConfigurationSource bean won't work
+                .addFilterBefore(requestBodyReadFilter, UsernamePasswordAuthenticationFilter.class) // Needed to extract jwt token from body
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(request -> (String) request.getAttribute(ACCESS_TOKEN)) // only needed if jwt is not in the header
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(customJwtAuthenticationConverter)
                         ));

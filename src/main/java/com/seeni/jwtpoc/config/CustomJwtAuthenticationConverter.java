@@ -17,7 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.seeni.jwtpoc.config.RequestBodyReadFilter.REQUEST_BODY;
+import static com.seeni.jwtpoc.config.RequestBodyReadFilter.DATA_TOKEN;
 import static com.seeni.jwtpoc.service.XmlRSAPublicKeyToRSAKeyObjectConverter.b64decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -61,7 +61,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     private static Optional<String> getRequestBody() {
         var requestAttributes = RequestContextHolder.getRequestAttributes();
         return Optional.ofNullable(requestAttributes)
-                .map(attribute -> attribute.getAttribute(REQUEST_BODY, SCOPE_REQUEST))
+                .map(attribute -> attribute.getAttribute(DATA_TOKEN, SCOPE_REQUEST))
                 .map(String::valueOf);
     }
 
