@@ -13,18 +13,16 @@
 
 # Postman Request
 
-1. Get header JWT token
+1. Get access token
     > curl --location 'http://localhost:8080/jwt/token' \
    --header 'Content-Type: application/json' \
-   --header 'Cookie: JSESSIONID=14260BCF46299203F39986BA21F66F6B' \
    --data '{
    "name":"seenimurugan",
    "scope": ["read", "write"]
    }'
-2. Get Body JWT token
+2. Get Data token(JWT token contains user information)
     > curl --location 'http://localhost:8080/jwt/bodytoken' \
    --header 'Content-Type: application/json' \
-   --header 'Cookie: JSESSIONID=14260BCF46299203F39986BA21F66F6B' \
    --data '{
    "eblDocumentId": "123",
    "rid": "seenimurugan",
@@ -38,16 +36,13 @@
 3. Access jwt secured endpoint
 
     > curl --location 'http://localhost:8080/jwt/secureendpoint' \
-   --header 'Content-Type: text/plain' \
-   --header 'Authorization: Bearer replace_me_with_above_header_jwt ' \
-   --header 'Cookie: JSESSIONID=ED68AFEBC21FF3BE5BB35FB6629AECD5' \
-   --data 'replace_me_with_above_body_jwt_token'
+   --header 'Content-Type: application/json' \
+   --data 'access_token=<Replace_generated_access_token>&data=<Replace_generated_data_token>'
 
 4. Generate Private and Public keys
    
    > curl --location --request GET 'http://localhost:8080/jwt/keys' \
    --header 'Content-Type: application/json' \
-   --header 'Cookie: JSESSIONID=6397865176A09E0FF268A9443F386AED' \
    --data '{
    "name":"seenimurugan",
    "scope": ["read", "write"]
