@@ -27,7 +27,7 @@ rsa:
   jwk: classpath:certs/jwk.json
 logging:
   level:
-    org.springframework.web: debug
+    org.springframework.web: trace
     org.springframework.security: trace
 
 

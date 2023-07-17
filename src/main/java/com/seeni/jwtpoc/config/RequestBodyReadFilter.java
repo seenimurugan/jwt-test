@@ -41,6 +41,7 @@ public class RequestBodyReadFilter extends OncePerRequestFilter {
             var requestBody = request.getReader()
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
+            log.debug("Request body token[{}]", requestBody);
             var accessToken = substringBetween(requestBody, ACCESS_TOKEN_IDENTIFIER, DATA_TOKEN_IDENTIFIER);
             var dataToken = substringAfter(requestBody, DATA_TOKEN_IDENTIFIER);
             request.setAttribute(ACCESS_TOKEN, accessToken);
