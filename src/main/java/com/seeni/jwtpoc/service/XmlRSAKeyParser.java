@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class XmlRSAPublicKeyToRSAKeyObjectConverter {
+public class XmlRSAKeyParser {
 
     public static final String MODULES_NAME = "Modulus";
     public static final String EXPONENT_NAME = "Exponent";
@@ -38,13 +38,13 @@ public class XmlRSAPublicKeyToRSAKeyObjectConverter {
     public static final String ALG_FAMILY = "kty";
     private final ObjectMapper objectMapper;
 
-    public RSAKey convertXmlRsaToRSAKeyObject(String xmlContentString) {
+    public RSAKey convertXmlRsaToRSAKey(String xmlContentString) {
         byte[] decodedXmlContentString = b64decode(xmlContentString);
         Optional<Document> XMLSecKeyDoc = parseXMLFile(decodedXmlContentString);
 
         return XMLSecKeyDoc
                 .filter(this::checkXMLRSAKey)
-                .map(this::convertXMLRSAPublicKeyToRSAKeyObject)
+                .map(this::getRSAKeyObject)
                 .orElse(null);
     }
 
@@ -58,7 +58,7 @@ public class XmlRSAPublicKeyToRSAKeyObjectConverter {
     }
 
     @SneakyThrows
-    private RSAKey convertXMLRSAPublicKeyToRSAKeyObject(Document xmlDoc) {
+    private RSAKey getRSAKeyObject(Document xmlDoc) {
         log.info("xml rsa key validation passed!!!");
         Node root = xmlDoc.getFirstChild();
         NodeList children = root.getChildNodes();

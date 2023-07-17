@@ -2,7 +2,7 @@ package com.seeni.jwtpoc.config;
 
 import com.nimbusds.jose.JOSEException;
 import com.seeni.jwtpoc.model.request.Wc1UserDetails;
-import com.seeni.jwtpoc.service.XmlRSAPublicKeyToRSAKeyObjectConverter;
+import com.seeni.jwtpoc.service.XmlRSAKeyParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.seeni.jwtpoc.config.RequestBodyReadFilter.DATA_TOKEN;
-import static com.seeni.jwtpoc.service.XmlRSAPublicKeyToRSAKeyObjectConverter.b64decode;
+import static com.seeni.jwtpoc.service.XmlRSAKeyParser.b64decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
@@ -36,7 +36,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     public static final String SIGNATURE = "signature";
     public static final String ACTION = "action";
     private final Map<String, JwtDecoder> jwtDecoderStore = new HashMap<>();
-    private final XmlRSAPublicKeyToRSAKeyObjectConverter xmlToJwkSetConverter;
+    private final XmlRSAKeyParser xmlRSAKeyParser;
 
     public AbstractAuthenticationToken convert(Jwt jwt) {
         var claims = jwt.getClaims();
@@ -88,7 +88,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     private JwtDecoder getJwtDecoder(String xmlPublicKey) {
         return Optional.ofNullable(jwtDecoderStore.get(xmlPublicKey))
                 .orElseGet(() -> {
-                    var rsaKey = xmlToJwkSetConverter.convertXmlRsaToRSAKeyObject(xmlPublicKey);
+                    var rsaKey = xmlRSAKeyParser.convertXmlRsaToRSAKey(xmlPublicKey);
                     try {
                         var jwtDecoder = NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
                         jwtDecoderStore.put(xmlPublicKey, jwtDecoder);
