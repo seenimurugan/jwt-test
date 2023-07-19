@@ -8,10 +8,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties({JwtSigningKey.class, JwtConfigProperties.class})
-public class JwtPocApplication {
+public class JwtTestApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JwtPocApplication.class, args);
+		SpringApplication.run(JwtTestApplication.class, args);
 	}
 
 }

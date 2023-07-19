@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>View EBL</title>
+    <meta http-equiv="Content-Type" content="application/json" />
+</head>
+<body>
+	<h1>Form</h1>
+    <form action="#" th:action="@{${tokenInfo.eblUrl}}" method="post">
+        <input  th:name="access_token" th:value="${tokenInfo.headerToken}">
+        <input  th:name="data" th:value="${tokenInfo.bodyToken}">
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+</body>
+</html>

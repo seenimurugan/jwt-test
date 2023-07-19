@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>View EBL</title>
+    <meta http-equiv="Content-Type" content="application/json"/>
+</head>
+<body>
+<h1>Form</h1>
+<form action="#" th:action="@{/generateToken}" th:object="${tokenInfo}" method="post">
+    <p>EBL Document Id: <input type="text" th:field="*{eblDocumentId}"/></p>
+    <p>RID: <input type="text" th:field="*{rid}"/></p>
+    <p>Language: <input type="text" th:field="*{language}"/></p>
+    <p>Code: <input type="text" th:field="*{code}"/></p>
+    <p>Company Code: <input type="text" th:field="*{companyCode}"/></p>
+    <p>Time Zone: <input type="text" th:field="*{timeZone}"/></p>
+    <p>Signature: <input type="text" th:field="*{signature}"/></p>
+    <p>Action: <input type="text" th:field="*{action}"/></p>
+
+    <p>EBL Url: <input type="text" th:field="*{eblUrl}"/></p>
+    <p>Audience: <input type="text" th:field="*{audience}"/></p>
+    <p><label>
+        Header RSA Key Pair in JWK format:
+        <textarea class="form-control" rows="8" th:field="*{headerRsaKeyPair}"></textarea>
+    </label></p>
+    <p><label>
+        Body RSA Key Pair in JWK format:
+        <textarea class="form-control" rows="8" th:field="*{bodyRsaKeyPair}"></textarea>
+    </label></p>
+
+
+    <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+</form>
+</body>
+</html>

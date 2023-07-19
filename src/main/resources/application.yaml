@@ -1,30 +1,11 @@
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-#          issuer-uri: https://login.microsoftonline.com/804a70cf-4a61-4a08-908e-a32b2cff8131/v2.0 - if this uri available to fetch the certificate and is same as iss in the jwt then jwk-set-uri is not needed.
-#          jwk-set-uri: https://idp.example.com/.well-known/jwks.json -- only use this if the iss in the jwt can not be used to fetch the certificate.
-          audiences: [5436e3e3-0866-4ac1-b0c0-85c6ec8b863f]
-          jwk-set-uri: http://localhost:8080/jwt/.well-known/jwks.json
+server:
+  port: 8081
 
 jwt:
   allowed-cw1-instances: [5436e3e3-0866-4ac1-b0c0-85c6ec8b863b]
-  roles: [
-    "1:VWtnNWFyVzEvaHNqMXBQTmwwYXNtdkVCUExsYlVkeU5TWHl0TW1raEVzOTROTnRhdkYzL3h5T3NTUjlidkhYa3NaQ3h2VURjOUNDVU4zTlJ6SUhCSE1RRG5mVHp4bGt6a3lGeXVWMVhQMkdRazdSeWg3NjhVNkxRTXgvWnhEUzNacEtSQVN1UEpFME1XUVpzb3h1UVFsaHhpVkh0Y1dGdXhQZVp0d1B4MHFNVFVRaU8xVF",
-    "2:RFdz09PC9Nb2R1bHVzPjxFeHBvbmVudD5BUUFCPC9FeHBvbmVudD48L1JTQUtleVZhbHVlPg==",
-    "0:PFJTQUtleVZhbHVlPjxNb2R1bHVzPnRGd0RJUCtFc1lOYjN5TG5uTVFBZ2lPdTFhOTU2SXljUDh0djZMZDE1bGhtTzVPZENhUDdaWDkrQnlnNVk4NFJuTTJBZVhmWm5yRTlvZW9QRkpLbFIveDhsWTBzdHRBcVlrSFExQzh1REpxZUNlVGRsZ3VwU2kxS3pwMjlVcEVnQmx1UUl6WEdkRkJxMHNDZWN3Z0Uvd3hKZlE3MWtOVXRu"
-  ]
-  post-request-path:
-    - /jwt/secureendpoint
-    - /jwt/redirectsecureendpoint
-  cors-allowed-origins:
-    - http://127.0.0.1
+  ebl-url: http://localhost:8080/jwt/redirectsecureendpoint
+  audience: 5436e3e3-0866-4ac1-b0c0-85c6ec8b863f
 
-
-rsa:
-  jwk-set: classpath:certs/jwk-set.json
-  jwk: classpath:certs/jwk.json
 logging:
   level:
     org.springframework.web: trace

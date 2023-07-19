@@ -8,5 +8,7 @@ import java.util.List;
 public record JwtConfigProperties(List<String> allowedCw1Instances,
                                   List<String> roles,
                                   List<String> postRequestPath,
-                                  List<String> corsAllowedOrigins) {
+                                  List<String> corsAllowedOrigins,
+                                  String eblUrl,
+                                  String audience) {
 }
