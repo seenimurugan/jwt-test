@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-Galileo app needs up and running to view the ebl, the url for the Galileo app can be passed using the UI form.
+jwt-poc app needs up and running to view the ebl, the url for the jwt-poc app can be passed using the UI form.
 
 ### Details
 
