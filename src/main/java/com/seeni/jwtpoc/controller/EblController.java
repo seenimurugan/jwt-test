@@ -44,14 +44,7 @@ public class EblController {
 
 	@RequestMapping(value = "/generateToken", method = RequestMethod.POST)
 	public String redirectToExternalUrl(Model model, @ModelAttribute TokenInfo tokenInfo) {
-		String bodyToken = tokenService.generateBodyToken(tokenInfo);
-		String headerToken = tokenService.generateHeaderToken(tokenInfo);
-		String eblUrl = tokenInfo.eblUrl() != null ? tokenInfo.eblUrl() : jwtConfigProperties.eblUrl();
-		var tokenDetails = TokenInfo.builder()
-				.headerToken(headerToken)
-				.bodyToken(bodyToken)
-				.eblUrl(eblUrl)
-				.build();
+		var tokenDetails = tokenService.createTokenInfoWithJwt(tokenInfo);
 		model.addAttribute("tokenInfo", tokenDetails);
 		return "eblForm";
 	}

@@ -5,6 +5,7 @@ jwt:
   allowed-cw1-instances: [5436e3e3-0866-4ac1-b0c0-85c6ec8b863b]
   ebl-url: http://localhost:8080/jwt/redirectsecureendpoint
   audience: 5436e3e3-0866-4ac1-b0c0-85c6ec8b863f
+  openid-configuration: classpath:config/openid-configuration.json
 
 logging:
   level:

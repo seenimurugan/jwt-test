@@ -5,11 +5,15 @@
     <meta http-equiv="Content-Type" content="application/json" />
 </head>
 <body>
-	<h1>Form</h1>
+	<h1>JWT token details</h1>
+
+    <p><span th:text="${tokenInfo.decodedHeaderToken}" /></p>
+    <p><span th:text="${tokenInfo.decodedBodyToken()}" /></p>
+
     <form action="#" th:action="@{${tokenInfo.eblUrl}}" method="post">
         <input  th:name="access_token" th:value="${tokenInfo.headerToken}">
         <input  th:name="data" th:value="${tokenInfo.bodyToken}">
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        <p><input type="submit" value="Show EBL" /></p>
     </form>
 </body>
 </html>

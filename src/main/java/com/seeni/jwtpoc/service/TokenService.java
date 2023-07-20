@@ -1,5 +1,6 @@
 package com.seeni.jwtpoc.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.KeyUse;
@@ -13,10 +14,7 @@ import com.seeni.jwtpoc.model.request.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -37,11 +35,14 @@ public class TokenService {
     public static final String TIME_ZONE = "timeZone";
     public static final String SIGNATURE = "signature";
     public static final String ACTION = "action";
+    public static final String ISSUER = "issuer";
     private final JwtConfigProperties jwtConfigProperties;
+    private final ObjectMapper objectMapper;
 
-    private final Map<String, RSAKey> keysMap = createFIFOMap(5);
+    private final Map<String, RSAKey> keysMap = createFIFOMap(100);
 
-    public String generateHeaderToken(TokenInfo tokenInfo) {
+    @SneakyThrows
+    public Jwt generateHeaderToken(TokenInfo tokenInfo) {
 
         var headerRsaKeyPair = tokenInfo.headerRsaKeyPair();
         var headerJwkSet = getJwkSet(headerRsaKeyPair);
@@ -51,14 +52,17 @@ public class TokenService {
         var bodyRsaKeyPair = tokenInfo.bodyRsaKeyPair();
         List<String> roles = getPublicKeyAsRoles(bodyRsaKeyPair);
 
+        var config = jwtConfigProperties.openidConfiguration();
+        var issuer = (String) config.get(ISSUER);
+
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .audience(List.of("5436e3e3-0866-4ac1-b0c0-85c6ec8b863f"))
+                .issuer(issuer)
+                .audience(List.of(tokenInfo.audience()))
                 .issuedAt(now)
                 .notBefore(now)
                 .expiresAt(now.plus(15, ChronoUnit.HOURS))
-                .subject(tokenInfo.code())
+                .subject(tokenInfo.userCode())
                 .claims(stringObjectMap -> {
                     var customClaims = Map.of(
                             "azp", jwtConfigProperties.allowedCw1Instances(),
@@ -66,7 +70,7 @@ public class TokenService {
                     stringObjectMap.putAll(customClaims);
                 })
                 .build();
-        return headerEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return headerEncoder.encode(JwtEncoderParameters.from(claims));
     }
 
     private List<String> getPublicKeyAsRoles(String bodyRsaKeyPair) {
@@ -80,7 +84,30 @@ public class TokenService {
         return List.of("0:" + part0, "1:" + part1, "2:" + part2);
     }
 
-    public String generateBodyToken(TokenInfo tokenInfo) {
+    @SneakyThrows
+    public TokenInfo createTokenInfoWithJwt(TokenInfo tokenInfo) {
+        var bodyTokenJwt = generateBodyToken(tokenInfo);
+        var headerTokenJwt = generateHeaderToken(tokenInfo);
+        var encodedBodyToken = bodyTokenJwt.getTokenValue();
+        var encodedHeaderToken = headerTokenJwt.getTokenValue();
+
+        var bodyTokenJwtClaims = bodyTokenJwt.getClaims();
+        var headerTokenJwtClaims = headerTokenJwt.getClaims();
+        var bodyTokenJwtClaimsAsString = objectMapper.writeValueAsString(bodyTokenJwtClaims);
+        var headerTokenJwtClaimsAsString = objectMapper.writeValueAsString(headerTokenJwtClaims);
+
+        String eblUrl = tokenInfo.eblUrl() != null ? tokenInfo.eblUrl() : jwtConfigProperties.eblUrl();
+
+        return TokenInfo.builder()
+                .headerToken(encodedHeaderToken)
+                .bodyToken(encodedBodyToken)
+                .decodedHeaderToken(headerTokenJwtClaimsAsString)
+                .decodedBodyToken(bodyTokenJwtClaimsAsString)
+                .eblUrl(eblUrl)
+                .build();
+    }
+
+    public Jwt generateBodyToken(TokenInfo tokenInfo) {
 
         var bodyRsaKeyPair = tokenInfo.bodyRsaKeyPair();
         var bodyJwkSet = getJwkSet(bodyRsaKeyPair);
@@ -92,13 +119,13 @@ public class TokenService {
                 .issuedAt(now)
                 .notBefore(now)
                 .expiresAt(now.plus(15, ChronoUnit.HOURS))
-                .subject(tokenInfo.code())
+                .subject(tokenInfo.userCode())
                 .claims(stringObjectMap -> {
                     var customClaims = Map.of(
                             EBL_DOCUMENT_ID, tokenInfo.eblDocumentId(),
                             RID, tokenInfo.rid(),
                             LANGUAGE, tokenInfo.language(),
-                            CODE, tokenInfo.code(),
+                            CODE, tokenInfo.userCode(),
                             COMPANY_CODE, tokenInfo.companyCode(),
                             TIME_ZONE, tokenInfo.timeZone(),
                             SIGNATURE, tokenInfo.signature(),
@@ -106,7 +133,7 @@ public class TokenService {
                     stringObjectMap.putAll(customClaims);
                 })
                 .build();
-        return bodyEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return bodyEncoder.encode(JwtEncoderParameters.from(claims));
     }
 
     @SneakyThrows
