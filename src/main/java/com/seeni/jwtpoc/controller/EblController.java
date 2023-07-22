@@ -37,6 +37,8 @@ public class EblController {
 				.headerRsaKeyPair(objectMapper.writeValueAsString(headerJwk))
 				.bodyRsaKeyPair(objectMapper.writeValueAsString(bodyJwk))
 				.audience(jwtConfigProperties.audience())
+				.cw1Instance(jwtConfigProperties.allowedCw1Instance())
+				.issuerUri(jwtConfigProperties.getIssuerUri())
 				.build();
 		model.addAttribute("tokenInfo", tokenInfo);
 		return "tokenInfoForm";

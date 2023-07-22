@@ -33,9 +33,10 @@ public class TokenService {
     public static final String CODE = "code";
     public static final String COMPANY_CODE = "companyCode";
     public static final String TIME_ZONE = "timeZone";
-    public static final String SIGNATURE = "signature";
+    public static final String CW1INSTANCE = "azp";
     public static final String ACTION = "action";
     public static final String ISSUER = "issuer";
+    public static final String ROLES = "roles";
     private final JwtConfigProperties jwtConfigProperties;
     private final ObjectMapper objectMapper;
 
@@ -52,21 +53,22 @@ public class TokenService {
         var bodyRsaKeyPair = tokenInfo.bodyRsaKeyPair();
         List<String> roles = getPublicKeyAsRoles(bodyRsaKeyPair);
 
-        var config = jwtConfigProperties.openidConfiguration();
-        var issuer = (String) config.get(ISSUER);
+        var issuer = tokenInfo.issuerUri() != null ? tokenInfo.issuerUri() : jwtConfigProperties.getIssuerUri();
+        var cw1Instance = tokenInfo.cw1Instance() != null ? tokenInfo.cw1Instance() : jwtConfigProperties.allowedCw1Instance();
+        var audience = tokenInfo.audience() != null ? tokenInfo.audience() : jwtConfigProperties.audience();
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(issuer)
-                .audience(List.of(tokenInfo.audience()))
+                .audience(List.of(audience))
                 .issuedAt(now)
                 .notBefore(now)
                 .expiresAt(now.plus(15, ChronoUnit.HOURS))
                 .subject(tokenInfo.userCode())
                 .claims(stringObjectMap -> {
                     var customClaims = Map.of(
-                            "azp", jwtConfigProperties.allowedCw1Instances(),
-                            "roles", roles);
+                            CW1INSTANCE, cw1Instance,
+                            ROLES, roles);
                     stringObjectMap.putAll(customClaims);
                 })
                 .build();
@@ -128,7 +130,6 @@ public class TokenService {
                             CODE, tokenInfo.userCode(),
                             COMPANY_CODE, tokenInfo.companyCode(),
                             TIME_ZONE, tokenInfo.timeZone(),
-                            SIGNATURE, tokenInfo.signature(),
                             ACTION, tokenInfo.action());
                     stringObjectMap.putAll(customClaims);
                 })
