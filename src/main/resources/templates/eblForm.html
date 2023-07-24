@@ -7,10 +7,10 @@
 <body>
 	<h1>JWT token details</h1>
 
-    <p><span th:text="${tokenInfo.decodedHeaderToken}" /></p>
-    <p><span th:text="${tokenInfo.decodedBodyToken()}" /></p>
+    <p><span style="white-space: pre" th:text="${tokenInfo.decodedHeaderToken}" /></p>
+    <p><span style="white-space: pre" th:text="${tokenInfo.decodedBodyToken()}" /></p>
 
-    <form action="#" th:action="@{${tokenInfo.eblUrl}}" method="post">
+    <form action="#" th:action="@{${tokenInfo.galileoEndpoint}}" method="post">
         <input  th:name="access_token" th:value="${tokenInfo.headerToken}">
         <input  th:name="data" th:value="${tokenInfo.bodyToken}">
         <p><input type="submit" value="Show EBL" /></p>

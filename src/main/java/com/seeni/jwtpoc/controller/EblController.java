@@ -33,11 +33,11 @@ public class EblController {
 		var headerJwk = Map.of(KEYS, List.of(headerRsaKey.toJSONObject()));
 		var bodyJwk = Map.of(KEYS, List.of(bodyRsaKey.toJSONObject()));
 		var tokenInfo = TokenInfo.builder()
-				.eblUrl(jwtConfigProperties.eblUrl())
+				.galileoEndpoints(jwtConfigProperties.galileoEndpoints())
 				.headerRsaKeyPair(objectMapper.writeValueAsString(headerJwk))
 				.bodyRsaKeyPair(objectMapper.writeValueAsString(bodyJwk))
 				.audience(jwtConfigProperties.audience())
-				.cw1Instance(jwtConfigProperties.allowedCw1Instance())
+				.cw1Instances(jwtConfigProperties.allowedCw1Instances())
 				.issuerUri(jwtConfigProperties.getIssuerUri())
 				.build();
 		model.addAttribute("tokenInfo", tokenInfo);

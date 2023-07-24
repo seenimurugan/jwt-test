@@ -15,17 +15,31 @@
     <p>Time Zone: <input type="text" th:field="*{timeZone}"/></p>
     <p>Action: <input type="text" th:field="*{action}"/></p>
 
-    <p>EBL Url: <input type="text" th:field="*{eblUrl}"/></p>
+    <p>CW1 Instance:
+        <select th:field="*{cw1Instance}">
+<!--            <option value="NONE">&#45;&#45;&#45;&#45;Select&#45;&#45;&#45;&#45;</option>-->
+            <option th:each="entry : ${tokenInfo.cw1Instances.entrySet()}" th:value="${entry.value}" th:text="${entry.key}">
+                This will be replaced - is only used for natural templating
+            </option>
+        </select>
+    </p>
+    <p>Galileo Endpoint:
+        <select th:field="*{galileoEndpoint}">
+<!--            <option value="NONE">&#45;&#45;&#45;&#45;Select&#45;&#45;&#45;&#45;</option>-->
+            <option th:each="entry : ${tokenInfo.galileoEndpoints.entrySet()}" th:value="${entry.value}" th:text="${entry.key}">
+                This will be replaced - is only used for natural templating
+            </option>
+        </select>
+    </p>
     <p>Audience: <input type="text" th:field="*{audience}"/></p>
-    <p>CW1 Instance: <input type="text" th:field="*{cw1Instance}"/></p>
     <p>Issuer URI: <input type="text" th:field="*{issuerUri}"/></p>
 
     <p><label>
-        Header RSA Key Pair in JWK format:
+        Azure RSA Key Pair in JWK format:
         <textarea class="form-control" rows="8" th:field="*{headerRsaKeyPair}"></textarea>
     </label></p>
     <p><label>
-        Body RSA Key Pair in JWK format:
+        CW1 RSA Key Pair in JWK format:
         <textarea class="form-control" rows="8" th:field="*{bodyRsaKeyPair}"></textarea>
     </label></p>
 

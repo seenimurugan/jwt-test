@@ -2,10 +2,18 @@ server:
   port: 8081
 
 jwt:
-  allowed-cw1-instance: 5436e3e3-0866-4ac1-b0c0-85c6ec8b863b
-  ebl-url: http://localhost:8080/jwt/redirectsecureendpoint
+  allowed-cw1-instances:
+    cw1: 5436e3e3-0866-4ac1-b0c0-85c6ec8b863b
+    cw2: 15436e3e3-0866-4ac1-b0c0-85c6ec8b863b
   audience: 5436e3e3-0866-4ac1-b0c0-85c6ec8b863f
   openid-configuration: classpath:config/openid-configuration.json
+  galileo-endpoints:
+    qa: http://localhost:8080/jwt/redirectsecureendpoint
+    uat: http://localhost:8081/jwt/redirectsecureendpoint
+
+rsa:
+  jwk-set: classpath:certs/jwk-set.json
+  rsa-key-pair: classpath:certs/rsa-key-pair.json
 
 logging:
   level:

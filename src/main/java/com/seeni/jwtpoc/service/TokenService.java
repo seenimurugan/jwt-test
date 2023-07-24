@@ -54,7 +54,6 @@ public class TokenService {
         List<String> roles = getPublicKeyAsRoles(bodyRsaKeyPair);
 
         var issuer = tokenInfo.issuerUri() != null ? tokenInfo.issuerUri() : jwtConfigProperties.getIssuerUri();
-        var cw1Instance = tokenInfo.cw1Instance() != null ? tokenInfo.cw1Instance() : jwtConfigProperties.allowedCw1Instance();
         var audience = tokenInfo.audience() != null ? tokenInfo.audience() : jwtConfigProperties.audience();
 
         Instant now = Instant.now();
@@ -67,7 +66,7 @@ public class TokenService {
                 .subject(tokenInfo.userCode())
                 .claims(stringObjectMap -> {
                     var customClaims = Map.of(
-                            CW1INSTANCE, cw1Instance,
+                            CW1INSTANCE, tokenInfo.cw1Instance(),
                             ROLES, roles);
                     stringObjectMap.putAll(customClaims);
                 })
@@ -95,17 +94,15 @@ public class TokenService {
 
         var bodyTokenJwtClaims = bodyTokenJwt.getClaims();
         var headerTokenJwtClaims = headerTokenJwt.getClaims();
-        var bodyTokenJwtClaimsAsString = objectMapper.writeValueAsString(bodyTokenJwtClaims);
-        var headerTokenJwtClaimsAsString = objectMapper.writeValueAsString(headerTokenJwtClaims);
-
-        String eblUrl = tokenInfo.eblUrl() != null ? tokenInfo.eblUrl() : jwtConfigProperties.eblUrl();
+        var bodyTokenJwtClaimsAsString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bodyTokenJwtClaims);
+        var headerTokenJwtClaimsAsString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(headerTokenJwtClaims);
 
         return TokenInfo.builder()
                 .headerToken(encodedHeaderToken)
                 .bodyToken(encodedBodyToken)
                 .decodedHeaderToken(headerTokenJwtClaimsAsString)
                 .decodedBodyToken(bodyTokenJwtClaimsAsString)
-                .eblUrl(eblUrl)
+                .galileoEndpoint(tokenInfo.galileoEndpoint())
                 .build();
     }
 
