@@ -20,7 +20,7 @@ public class EblController {
 	public String home(Model model) {
 		TokenInfo tokenInfo = tokenService.getDefaultTokenDetails();
 		model.addAttribute("tokenInfo", tokenInfo);
-		return "tokenInfoForm";
+		return "userDetailsForm";
 	}
 
 	@RequestMapping(value = "/generateToken", method = RequestMethod.POST)
@@ -31,7 +31,7 @@ public class EblController {
 		} else {
 			model.addAttribute("tokenInfo", tokenDetails);
 		}
-		return "userDetailsForm";
+		return "tokenDetailsFrom";
 	}
 
 }
