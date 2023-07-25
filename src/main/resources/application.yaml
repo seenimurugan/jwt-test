@@ -10,10 +10,12 @@ jwt:
   galileo-endpoints:
     qa: http://localhost:8080/jwt/redirectsecureendpoint
     uat: http://localhost:8081/jwt/redirectsecureendpoint
+  azr-public-key-url: https://cargowiseb2c01.b2clogin.com/cargowiseb2c01.onmicrosoft.com/b2c_1a_signup_signin/discovery/v2.0/keys
+  rdp-web-service: http://localhost:5000/Test/STSM
 
 rsa:
-  jwk-set: classpath:certs/jwk-set.json
-  rsa-key-pair: classpath:certs/rsa-key-pair.json
+  header-rsa-key-pair: classpath:certs/header-rsa-key-pair.json
+  body-rsa-key-pair: classpath:certs/body-rsa-key-pair.json
 
 logging:
   level:

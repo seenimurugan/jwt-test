@@ -14,7 +14,9 @@ public record JwtConfigProperties(Map<String, String> allowedCw1Instances,
                                   List<String> postRequestPath,
                                   List<String> corsAllowedOrigins,
                                   String audience,
-                                  JSONObject openidConfiguration) {
+                                  JSONObject openidConfiguration,
+                                  String azrPublicKeyUrl,
+                                  String rdpWebService) {
     public static final String ISSUER = "issuer";
     @SneakyThrows
     public String getIssuerUri() {

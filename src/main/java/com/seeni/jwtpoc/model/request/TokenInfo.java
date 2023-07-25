@@ -9,7 +9,7 @@ public record TokenInfo(String eblDocumentId, String rid, String language, Strin
                         String issuerUri, String bodyToken, String headerToken, Map<String, String> galileoEndpoints,
                         String headerRsaKeyPair, String bodyRsaKeyPair, String audience,
                         String decodedBodyToken, String decodedHeaderToken,
-                        String cw1Instance, String galileoEndpoint) {
+                        String cw1Instance, String galileoEndpoint, Boolean useWebService) {
     @Builder
     public TokenInfo {}
 }
