@@ -18,20 +18,20 @@ public class EblController {
 
 	@GetMapping("/")
 	public String home(Model model) {
-		var tokenInfo = tokenService.getDefaultTokenDetails();
+		TokenInfo tokenInfo = tokenService.getDefaultTokenDetails();
 		model.addAttribute("tokenInfo", tokenInfo);
 		return "tokenInfoForm";
 	}
 
 	@RequestMapping(value = "/generateToken", method = RequestMethod.POST)
 	public String redirectToExternalUrl(Model model, @ModelAttribute TokenInfo tokenInfo) {
-		var tokenDetails = tokenService.createTokenInfoWithJwt(tokenInfo);
+		TokenInfo tokenDetails = tokenService.createTokenInfoWithJwt(tokenInfo);
 		if (tokenInfo.useWebService()) {
 			tokenService.redirectToWebService(tokenDetails);
 		} else {
 			model.addAttribute("tokenInfo", tokenDetails);
 		}
-		return "eblForm";
+		return "userDetailsForm";
 	}
 
 }

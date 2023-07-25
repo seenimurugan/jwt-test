@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -21,7 +22,7 @@ public class JSONObjectConverter implements Converter<String, JSONObject> {
     public JSONObject convert(String source) {
         try {
             if (ResourceUtils.isUrl(source)) {
-                var resource = resourceLoader.getResource(source);
+                Resource resource = resourceLoader.getResource(source);
                 return new JSONObject(resource.getContentAsString(StandardCharsets.UTF_8));
             } else {
                 return new JSONObject(source);
