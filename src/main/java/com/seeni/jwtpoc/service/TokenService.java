@@ -12,7 +12,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.seeni.jwtpoc.config.JwtConfigProperties;
 import com.seeni.jwtpoc.config.JwtSigningKey;
-import com.seeni.jwtpoc.config.KeyPairName;
+import com.seeni.jwtpoc.model.KeyPairName;
 import com.seeni.jwtpoc.model.request.TokenInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.seeni.jwtpoc.config.KeyPairName.BODY;
-import static com.seeni.jwtpoc.config.KeyPairName.HEADER;
+import static com.seeni.jwtpoc.model.KeyPairName.BODY;
+import static com.seeni.jwtpoc.model.KeyPairName.HEADER;
 
 @Service
 @Slf4j
