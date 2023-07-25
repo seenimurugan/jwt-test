@@ -1,4 +1,4 @@
-package com.seeni.jwtpoc.config;
+package com.seeni.jwtpoc.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
