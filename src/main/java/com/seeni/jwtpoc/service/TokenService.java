@@ -107,7 +107,7 @@ public class TokenService {
         Jwt headerTokenJwt = generateHeaderToken(tokenInfo);
         String encodedBodyToken = bodyTokenJwt.getTokenValue();
         String encodedHeaderToken = headerTokenJwt.getTokenValue();
-
+        addPublicKey(tokenInfo.publicKeyUri());
         Map<String, Object> bodyTokenJwtClaims = bodyTokenJwt.getClaims();
         Map<String, Object> headerTokenJwtClaims = headerTokenJwt.getClaims();
         String bodyTokenJwtClaimsAsString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bodyTokenJwtClaims);
@@ -208,7 +208,7 @@ public class TokenService {
                 .audience(jwtConfigProperties.audience())
                 .cw1Instances(jwtConfigProperties.allowedCw1Instances())
                 .issuerUri(jwtConfigProperties.getIssuerUri())
-                .useWebService(false)
+                .publicKeyUri(jwtConfigProperties.azrPublicKeyUrl())
                 .build();
     }
 
@@ -250,9 +250,20 @@ public class TokenService {
     @PostConstruct
     public void addAzrPublicKeyToCache() {
         String publicKeyUrl = jwtConfigProperties.azrPublicKeyUrl();
-        String azrPublicKey = restTemplate.getForObject(publicKeyUrl, String.class);
-        JWKSet jwkSet = getJwkSet(azrPublicKey);
-        addToCache(jwkSet);
+        addPublicKey(publicKeyUrl);
+    }
+
+    public void addPublicKey(String publicKeyUrl) {
+        String[] publicKeyUrls = publicKeyUrl.split(";");
+        Arrays.stream(publicKeyUrls).forEach(url -> {
+            try {
+                String azrPublicKey = restTemplate.getForObject(url.trim(), String.class);
+                JWKSet jwkSet = getJwkSet(azrPublicKey);
+                addToCache(jwkSet);
+            } catch (Exception ex) {
+                log.error("Exception in downloading public key", ex);
+            }
+        });
     }
 
     @SneakyThrows

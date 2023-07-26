@@ -10,7 +10,7 @@ jwt:
   galileo-endpoints:
     qa: http://localhost:8080/jwt/redirectsecureendpoint
     uat: http://localhost:8081/jwt/redirectsecureendpoint
-  azr-public-key-url: https://cargowiseb2c01.b2clogin.com/cargowiseb2c01.onmicrosoft.com/b2c_1a_signup_signin/discovery/v2.0/keys
+  azr-public-key-url: https://cargowiseb2c01.b2clogin.com/cargowiseb2c01.onmicrosoft.com/b2c_1a_signup_signin/discovery/v2.0/keys;http://localhost:8080/jwks/v1.0/.well-known/jwks.json
   rdp-web-service: http://localhost:5000/Test/STSM
 
 rsa:

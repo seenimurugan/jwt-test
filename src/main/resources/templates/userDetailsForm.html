@@ -70,21 +70,23 @@
                 </option>
             </select>
         </div>
+        <div class="col-md-12">
+            <label for="publicKeyUri" class="form-label fw-bold">Public Key URI</label>
+            <input type="text" th:field="*{publicKeyUri}" class="form-control" id="publicKeyUri" data-toggle="tooltip"
+                   data-placement="top" title="Multiple URL can be separated by ';'">
+        </div>
         <div class="col-md-6">
             <label for="headerRsaKeyPair" class="form-label fw-bold">Azure RSA Key Pair in JWK format(Mock)</label>
             <textarea style="white-space: pre" th:field="*{headerRsaKeyPair}" class="form-control"
                       id="headerRsaKeyPair"
                       rows="12"></textarea>
         </div>
-
         <div class="col-md-6">
+
             <label for="bodyRsaKeyPair" class="form-label fw-bold">CW1 RSA Key Pair in JWK format(Mock)</label>
             <textarea style="white-space: pre" th:field="*{bodyRsaKeyPair}" class="form-control" id="bodyRsaKeyPair"
                       rows="12"></textarea>
         </div>
-
-        <input type="hidden" th:value=false name="useWebService"/>
-
         <div class="col text-center">
             <button class="btn btn-primary" type="submit">Generate Token</button>
         </div>

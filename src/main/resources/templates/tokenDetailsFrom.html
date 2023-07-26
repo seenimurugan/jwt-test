@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>View EBL</title>
     <meta http-equiv="Content-Type" content="application/json"/>
@@ -13,7 +13,7 @@
 <div class="container">
     <br/>
     <br/>
-<!--    <h2 class="text-center">JWT token details</h2>-->
+    <!--    <h2 class="text-center">JWT token details</h2>-->
     <form class="row g-3">
         <div class="col-md-6">
             <label for="headerTokenDetails" class="form-label fw-bold">Access Token Details</label>
@@ -24,13 +24,11 @@
 
         <div class="col-md-6">
             <label for="bodyTokenDetails" class="form-label fw-bold">Data Token Details</label>
-            <textarea style="white-space: pre" th:field="${tokenInfo.decodedBodyToken}" class="form-control" id="bodyTokenDetails"
+            <textarea style="white-space: pre" th:field="${tokenInfo.decodedBodyToken}" class="form-control"
+                      id="bodyTokenDetails"
                       rows="12"></textarea>
         </div>
     </form>
-<!--    <p><span style="white-space: pre" th:text="${tokenInfo.decodedHeaderToken}"/></p>-->
-<!--    <p><span style="white-space: pre" th:text="${tokenInfo.decodedBodyToken()}"/></p>-->
-
     <br/>
     <form action="#" th:action="@{${tokenInfo.galileoEndpoint}}" method="post">
         <div class="row mb-3">
@@ -51,6 +49,18 @@
             </div>
         </div>
     </form>
+    </br>
+    <div class="row">
+        <div class="col text-center">
+            <form action="#" th:action="@{/invokewebservice}" th:object="${tokenInfo}" method="post">
+                <input type="hidden" th:field="*{headerToken}"/>
+                <input type="hidden" th:field="*{bodyToken}"/>
+                <input type="hidden" th:field="*{galileoEndpoint}"/>
+                <button class="btn btn-outline-warning" type="submit" data-toggle="tooltip"
+                        data-placement="top" title="Make sure Webservice running locally @ port 5000">Invoke Webservice</button>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

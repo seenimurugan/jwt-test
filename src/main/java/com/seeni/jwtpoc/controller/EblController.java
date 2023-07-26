@@ -14,24 +14,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequiredArgsConstructor
 public class EblController {
 
-	private final TokenService tokenService;
+    private final TokenService tokenService;
 
-	@GetMapping("/")
-	public String home(Model model) {
-		TokenInfo tokenInfo = tokenService.getDefaultTokenDetails();
-		model.addAttribute("tokenInfo", tokenInfo);
-		return "userDetailsForm";
-	}
+    @GetMapping("/")
+    public String home(Model model) {
+        TokenInfo tokenInfo = tokenService.getDefaultTokenDetails();
+        model.addAttribute("tokenInfo", tokenInfo);
+        return "userDetailsForm";
+    }
 
-	@RequestMapping(value = "/generateToken", method = RequestMethod.POST)
-	public String redirectToExternalUrl(Model model, @ModelAttribute TokenInfo tokenInfo) {
-		TokenInfo tokenDetails = tokenService.createTokenInfoWithJwt(tokenInfo);
-		if (tokenInfo.useWebService()) {
-			tokenService.redirectToWebService(tokenDetails);
-		} else {
-			model.addAttribute("tokenInfo", tokenDetails);
-		}
-		return "tokenDetailsFrom";
-	}
+    @RequestMapping(value = "/generateToken", method = RequestMethod.POST)
+    public String generateToken(Model model, @ModelAttribute TokenInfo tokenInfo) {
+        TokenInfo tokenDetails = tokenService.createTokenInfoWithJwt(tokenInfo);
+        model.addAttribute("tokenInfo", tokenDetails);
+        return "tokenDetailsFrom";
+    }
+
+    @RequestMapping(value = "/invokewebservice", method = RequestMethod.POST)
+    public String invokeWebservice(Model model, @ModelAttribute TokenInfo tokenInfo) {
+        tokenService.redirectToWebService(tokenInfo);
+        return "redirectForm";
+    }
 
 }
